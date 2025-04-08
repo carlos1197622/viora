@@ -12,22 +12,46 @@
       --button-hover: #292946;
       --text-light: #e0e0ff;
       --header-gradient: linear-gradient(90deg, #00ffc3, #00bfff);
+      --glow-color: rgba(0, 255, 195, 0.6);
     }
 
     * {
       box-sizing: border-box;
     }
 
+    @font-face {
+      font-family: 'Orbitron';
+      src: url('https://fonts.gstatic.com/s/orbitron/v30/yMJRMIlzdpvBhQQL_Qq7dys.woff2') format('woff2');
+      font-style: normal;
+      font-weight: 400;
+    }
+
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Orbitron', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: var(--bg-color);
       color: var(--text-light);
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    canvas#particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      margin: 0;
       padding: 20px;
       text-align: center;
     }
@@ -44,10 +68,18 @@
       text-shadow: 0 0 10px rgba(0, 255, 195, 0.3);
     }
 
+    .calculator-box {
+      background-color: rgba(26, 26, 46, 0.8);
+      border: 2px solid var(--primary);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 0 20px rgba(0, 255, 195, 0.2);
+      max-width: 400px;
+      width: 100%;
+    }
+
     .display {
       margin-bottom: 1.5rem;
-      width: 100%;
-      max-width: 400px;
     }
 
     .number-display {
@@ -67,7 +99,6 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 12px;
       width: 100%;
-      max-width: 400px;
     }
 
     button {
@@ -78,7 +109,7 @@
       border: 2px solid var(--primary);
       border-radius: 14px;
       cursor: pointer;
-      transition: background-color 0.3s, transform 0.2s;
+      transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
     }
 
     button:hover {
@@ -86,8 +117,8 @@
       transform: scale(1.05);
     }
 
-    .wide {
-      grid-column: span 3;
+    button:active {
+      box-shadow: 0 0 12px var(--glow-color), 0 0 30px var(--glow-color);
     }
 
     @media (max-width: 480px) {
@@ -108,41 +139,57 @@
   </style>
 </head>
 <body>
-  <div class="header">C&L Rapid Concrete</div>
-  <div class="display">
-    <div class="number-display" id="numberDisplay">0</div>
-    <div class="word-display" id="wordDisplay">Zero</div>
+  <canvas id="particles"></canvas>
+  <div class="container">
+    <div class="header">C&L Rapid Concrete</div>
+    <div class="calculator-box">
+      <div class="display">
+        <div class="number-display" id="numberDisplay">0</div>
+        <div class="word-display" id="wordDisplay">Zero</div>
+      </div>
+      <div class="keypad">
+        <button onclick="appendDigit('1')">1</button>
+        <button onclick="appendDigit('2')">2</button>
+        <button onclick="appendDigit('3')">3</button>
+        <button onclick="appendDigit('4')">4</button>
+        <button onclick="appendDigit('5')">5</button>
+        <button onclick="appendDigit('6')">6</button>
+        <button onclick="appendDigit('7')">7</button>
+        <button onclick="appendDigit('8')">8</button>
+        <button onclick="appendDigit('9')">9</button>
+        <button onclick="clearNumber()">C</button>
+        <button onclick="appendDigit('0')">0</button>
+        <button onclick="deleteDigit()">⌫</button>
+      </div>
+    </div>
   </div>
-  <div class="keypad">
-    <button onclick="appendDigit('1')">1</button>
-    <button onclick="appendDigit('2')">2</button>
-    <button onclick="appendDigit('3')">3</button>
-    <button onclick="appendDigit('4')">4</button>
-    <button onclick="appendDigit('5')">5</button>
-    <button onclick="appendDigit('6')">6</button>
-    <button onclick="appendDigit('7')">7</button>
-    <button onclick="appendDigit('8')">8</button>
-    <button onclick="appendDigit('9')">9</button>
-    <button onclick="clearNumber()">C</button>
-    <button onclick="appendDigit('0')">0</button>
-    <button onclick="deleteDigit()">⌫</button>
-  </div>
+
+  <audio id="clickSound" src="https://assets.mixkit.co/sfx/download/mixkit-arcade-retro-click-223.wav"></audio>
 
   <script>
     let currentNumber = "";
+    const clickSound = document.getElementById("clickSound");
+
+    function playSound() {
+      clickSound.currentTime = 0;
+      clickSound.play();
+    }
 
     function appendDigit(digit) {
+      playSound();
       if (currentNumber === "0") currentNumber = "";
       currentNumber += digit;
       updateDisplay();
     }
 
     function clearNumber() {
+      playSound();
       currentNumber = "";
       updateDisplay();
     }
 
     function deleteDigit() {
+      playSound();
       currentNumber = currentNumber.slice(0, -1);
       updateDisplay();
     }
@@ -201,6 +248,45 @@
     }
 
     updateDisplay();
+
+    // Particle background animation
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let particles = [];
+    for (let i = 0; i < 75; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 2 + 1,
+        dx: (Math.random() - 0.5) * 0.8,
+        dy: (Math.random() - 0.5) * 0.8,
+      });
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "rgba(0,255,195,0.5)";
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+        p.x += p.dx;
+        p.y += p.dy;
+
+        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+      });
+      requestAnimationFrame(animateParticles);
+    }
+
+    animateParticles();
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
   </script>
 </body>
 </html>
