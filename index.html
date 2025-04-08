@@ -2,33 +2,147 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Viora</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Number to Words Converter</title>
   <style>
     body {
-      background-color: #0d0d0d;
-      color: #ffffff;
-      font-family: sans-serif;
+      font-family: Arial, sans-serif;
+      background-color: #1e1e2f;
+      color: #fff;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       height: 100vh;
       margin: 0;
     }
-    h1 {
-      font-size: 3rem;
-      color: #ff00cc;
-      text-shadow: 0 0 10px #ff00cc;
+    .display {
+      margin-bottom: 1rem;
+      text-align: center;
     }
-    p {
+    .number-display {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    .word-display {
       font-size: 1.2rem;
-      color: #ffffffcc;
+      color: #ccc;
+    }
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 80px);
+      gap: 10px;
+    }
+    button {
+      padding: 20px;
+      font-size: 1.5rem;
+      background-color: #2d2d3c;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #44445a;
+    }
+    .wide {
+      grid-column: span 3;
     }
   </style>
 </head>
 <body>
-  <h1>Viora</h1>
-  <p>She remembers you.</p>
+  <div class="display">
+    <div class="number-display" id="numberDisplay">0</div>
+    <div class="word-display" id="wordDisplay">Zero</div>
+  </div>
+  <div class="keypad">
+    <button onclick="appendDigit('1')">1</button>
+    <button onclick="appendDigit('2')">2</button>
+    <button onclick="appendDigit('3')">3</button>
+    <button onclick="appendDigit('4')">4</button>
+    <button onclick="appendDigit('5')">5</button>
+    <button onclick="appendDigit('6')">6</button>
+    <button onclick="appendDigit('7')">7</button>
+    <button onclick="appendDigit('8')">8</button>
+    <button onclick="appendDigit('9')">9</button>
+    <button onclick="clearNumber()">C</button>
+    <button onclick="appendDigit('0')">0</button>
+    <button onclick="deleteDigit()">⌫</button>
+  </div>
+
+  <script>
+    let currentNumber = "";
+
+    function appendDigit(digit) {
+      if (currentNumber === "0") currentNumber = "";
+      currentNumber += digit;
+      updateDisplay();
+    }
+
+    function clearNumber() {
+      currentNumber = "";
+      updateDisplay();
+    }
+
+    function deleteDigit() {
+      currentNumber = currentNumber.slice(0, -1);
+      updateDisplay();
+    }
+
+    function formatWithCommas(numberStr) {
+      return Number(numberStr).toLocaleString();
+    }
+
+    function numberToWords(n) {
+      if (n === 0) return "Zero";
+      const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+      const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+      const g = ["", "Thousand", "Million", "Billion"];
+
+      function chunk(num) {
+        let chunks = [];
+        while (num > 0) {
+          chunks.push(num % 1000);
+          num = Math.floor(num / 1000);
+        }
+        return chunks;
+      }
+
+      function threeDigitsToWords(num) {
+        let str = "";
+        if (num >= 100) {
+          str += a[Math.floor(num / 100)] + " Hundred ";
+          num %= 100;
+        }
+        if (num >= 20) {
+          str += b[Math.floor(num / 10)] + " ";
+          num %= 10;
+        }
+        if (num > 0) {
+          str += a[num] + " ";
+        }
+        return str.trim();
+      }
+
+      let words = "";
+      let chunks = chunk(n);
+      for (let i = 0; i < chunks.length; i++) {
+        if (chunks[i] !== 0) {
+          words = threeDigitsToWords(chunks[i]) + (g[i] ? " " + g[i] : "") + " " + words;
+        }
+      }
+      return words.trim();
+    }
+
+    function updateDisplay() {
+      const numberDisplay = document.getElementById("numberDisplay");
+      const wordDisplay = document.getElementById("wordDisplay");
+      const num = currentNumber ? parseInt(currentNumber) : 0;
+      numberDisplay.textContent = formatWithCommas(num);
+      wordDisplay.textContent = numberToWords(num);
+    }
+
+    updateDisplay();
+  </script>
 </body>
 </html>
