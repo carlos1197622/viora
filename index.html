@@ -158,15 +158,22 @@
         <button onclick="appendDigit('8')">8</button>
         <button onclick="appendDigit('9')">9</button>
         <button onclick="clearNumber()">C</button>
-        <button onclick="appendDigit('0')">0</button>
-        <button onclick="deleteDigit()">⌫</button>
+        <button onclick="appendDigit('0')">0</button>
+        <button onclick="confirmClear()" style="grid-column: span 3; background-color: #ff3366; color: white;">Clear All</button>
       </div>
     </div>
   </div>
 
   <audio id="clickSound" src="https://assets.mixkit.co/sfx/download/mixkit-arcade-retro-click-223.wav"></audio>
 
-  <script>
+      function confirmClear() {
+      playSound();
+      if (confirm('Are you sure you want to clear the entire number?')) {
+        currentNumber = "";
+        updateDisplay();
+      }
+    }
+
     let currentNumber = "";
     const clickSound = document.getElementById("clickSound");
 
