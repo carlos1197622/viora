@@ -160,8 +160,7 @@
         <button onclick="clearNumber()">C</button>
         <button onclick="appendDigit('0')">0</button>
         <button onclick="deleteDigit()">⌫</button>
-        <button onclick="confirmClear()" style="grid-column: span 3; background-color: #ff3366; color: white;">Clear All</button>
-      </div>
+        </div>
     </div>
   </div>
 
@@ -183,10 +182,12 @@
     }
 
     function clearNumber() {
-      playSound();
-      currentNumber = "";
-      updateDisplay();
-    }
+  playSound();
+  while (currentNumber.length > 0) {
+    currentNumber = currentNumber.slice(0, -1);
+  }
+  updateDisplay();
+}
 
     function deleteDigit() {
       playSound();
