@@ -2,51 +2,91 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Number to Words Converter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Viora - Number to Words</title>
   <style>
+    :root {
+      --bg-color: #0d0d1a;
+      --primary: #00ffc3;
+      --button-bg: #1a1a2e;
+      --button-hover: #292946;
+      --text-light: #e0e0ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background-color: #1e1e2f;
-      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-light);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
       margin: 0;
-    }
-    .display {
-      margin-bottom: 1rem;
+      padding: 20px;
       text-align: center;
     }
+
+    .display {
+      margin-bottom: 1.5rem;
+      width: 100%;
+      max-width: 400px;
+    }
+
     .number-display {
-      font-size: 2rem;
+      font-size: 2.2rem;
       margin-bottom: 0.5rem;
+      color: var(--primary);
+      word-wrap: break-word;
     }
+
     .word-display {
-      font-size: 1.2rem;
-      color: #ccc;
+      font-size: 1.1rem;
+      color: var(--text-light);
     }
+
     .keypad {
       display: grid;
-      grid-template-columns: repeat(3, 80px);
-      gap: 10px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      width: 100%;
+      max-width: 400px;
     }
+
     button {
-      padding: 20px;
+      padding: 18px;
       font-size: 1.5rem;
-      background-color: #2d2d3c;
-      color: white;
-      border: none;
-      border-radius: 10px;
+      background-color: var(--button-bg);
+      color: var(--primary);
+      border: 2px solid var(--primary);
+      border-radius: 14px;
       cursor: pointer;
+      transition: background-color 0.3s;
     }
+
     button:hover {
-      background-color: #44445a;
+      background-color: var(--button-hover);
     }
+
     .wide {
       grid-column: span 3;
+    }
+
+    @media (max-width: 480px) {
+      .number-display {
+        font-size: 1.6rem;
+      }
+      .word-display {
+        font-size: 1rem;
+      }
+      button {
+        padding: 16px;
+        font-size: 1.3rem;
+      }
     }
   </style>
 </head>
