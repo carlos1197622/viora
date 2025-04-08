@@ -240,12 +240,19 @@
     }
 
     function updateDisplay() {
-      const numberDisplay = document.getElementById("numberDisplay");
-      const wordDisplay = document.getElementById("wordDisplay");
-      const num = currentNumber ? parseInt(currentNumber) : 0;
-      numberDisplay.textContent = formatWithCommas(num);
-      wordDisplay.textContent = numberToWords(num);
-    }
+  const numberDisplay = document.getElementById("numberDisplay");
+  const wordDisplay = document.getElementById("wordDisplay");
+
+  if (!currentNumber || isNaN(currentNumber)) {
+    numberDisplay.textContent = "0";
+    wordDisplay.textContent = "Zero";
+    return;
+  }
+
+  const num = parseInt(currentNumber);
+  numberDisplay.textContent = formatWithCommas(num);
+  wordDisplay.textContent = numberToWords(num);
+}
 
     updateDisplay();
 
